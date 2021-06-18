@@ -1,0 +1,11 @@
+{
+    "Users": {
+        "dbConfig": {
+            "DBConnectionString": "DB_URI"
+        },
+        "Login": {
+            "JWTPrivateKey": "UserPrivateKey"
+        }
+
+    }
+}

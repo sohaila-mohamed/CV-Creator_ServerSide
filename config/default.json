@@ -1,0 +1,14 @@
+{
+    "name": "Express App-Development",
+    "server": {
+        "port": 3000
+    },
+    "Users": {
+        "dbConfig": {
+            "host": "localhost",
+            "port": 27017,
+            "dbName": "CvMaker"
+        }
+
+    }
+}
