@@ -5,8 +5,9 @@ const path = require('path');
 const config = require('config');
 const app = express();
 const DB = require('./database/DatabaseConnection');
-const Main_Router = require('./routers/MainRouter')
-    //checking for environment variables 
+const Main_Router = require('./routers/MainRouter');
+const { ErrorHandler } = require('./middlewares/Error');
+//checking for environment variables 
 if (!config.has('Users.dbConfig.DBConnectionString')) {
     console.log("Fatal Error, Server Can't Start");
     process.exit(1);
@@ -52,3 +53,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 //routers 
 app.use('/api', Main_Router);
+//error handler middleware
+app.use(ErrorHandler);
+
+//uncaught exceptions 
+process.on('uncaughtException', (ex) => {
+    next({ status: 505, message: "internal server error", err: ex });
+    process.exit(1);
+});
+//unhandled rejections
+process.on('unhandledRejection', (ex) => {
+    next({ status: 505, message: "internal server error", err: ex });
+    process.exit(1);
+});
