@@ -22,7 +22,7 @@ const userScheme = new mongos.Schema({
         unique: true,
         required: true,
         minlength: 5,
-        maxlength: 255
+        maxlength: 255,
     },
     profileImg: {
         type: String
@@ -47,7 +47,7 @@ const userScheme = new mongos.Schema({
 
 //for consistent authentication token generation
 userScheme.methods.GenerateAuthenticationToken = function() {
-    return jwt.sign({ _id: this._id }, config.get('Students.Login.JWTPrivateKey'));
+    return jwt.sign({ _id: this._id }, config.get('Users.Login.JWTPrivateKey'));
 }
 
 

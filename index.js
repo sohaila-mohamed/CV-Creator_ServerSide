@@ -56,13 +56,15 @@ app.use('/api', Main_Router);
 //error handler middleware
 app.use(ErrorHandler);
 
+
+
 //uncaught exceptions 
 process.on('uncaughtException', (ex) => {
-    next({ status: 505, message: "internal server error", err: ex });
+    console.log({ status: 505, message: "internal server error", err: "uncaughtException" });
     process.exit(1);
 });
 //unhandled rejections
 process.on('unhandledRejection', (ex) => {
-    next({ status: 505, message: "internal server error", err: ex });
+    console.log({ status: 505, message: "internal server error", err: "unhandled rejections" });
     process.exit(1);
 });

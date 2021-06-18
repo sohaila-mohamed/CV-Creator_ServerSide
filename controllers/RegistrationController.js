@@ -25,7 +25,7 @@ async function AddNewUser(req, res, next) {
 
     //save mapping returned object to the client  
     _std.save().then((result) => {
-        res.send(_.pick(result, ['_id', 'firstName', 'lastName', 'email']));
+        res.send(_.pick(result, ['_id', 'firstName', 'lastName', 'email', 'plan', 'cvs']));
     }).catch((err) => {
         next({ status: 500, message: 'Server Error', err: err })
         for (e in err.errors) { console.log(err.errors[e].message) }
