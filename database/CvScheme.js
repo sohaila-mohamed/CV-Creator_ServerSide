@@ -8,7 +8,8 @@ const CvScheme = new mongos.Schema({
         type: Number,
         required: true,
         min: [100, 'not valid cv id '],
-        max: 599
+        max: 599,
+        unique: true
     },
     htmlTemplate: {
         type: String,
@@ -37,4 +38,4 @@ const Cv = mongos.model("cvs", CvScheme);
 
 module.exports.Cv = Cv;
 
-module.exports.validate = validateCV;
+module.exports.validateCv = validateCV;

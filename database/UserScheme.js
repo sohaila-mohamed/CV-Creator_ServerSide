@@ -39,7 +39,7 @@ const userScheme = new mongos.Schema({
         default: 0
     },
     cvs: {
-        type: [CvScheme],
+        type: [String],
 
     }
 

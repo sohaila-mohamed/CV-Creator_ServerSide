@@ -12,7 +12,6 @@ async function UpdateUserData(req, res, next) {
             lastName: req.body.lastName,
             email: req.body.email === user.email ? user.email : req.body.email,
             profileImg: req.file.filename ? req.file.filename : user.profileImg,
-            password: req.body.password ? req.body.password : user.password,
             plan: req.body.plan ? req.body.plan : user.plan
         }
     }).catch((err) => {
