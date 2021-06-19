@@ -51,6 +51,8 @@ app.use(cors(corsOptions));
 //body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+//static files
+app.use(express.static(path.join(__dirname, './uploads/')));
 //routers 
 app.use('/api', Main_Router);
 //error handler middleware
