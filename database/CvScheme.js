@@ -4,11 +4,6 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 mongos.set('useCreateIndex', true);
 const CvScheme = new mongos.Schema({
-    cvId: {
-        type: Number,
-        required: true,
-        unique: true
-    },
     templateId: {
         type: Number,
         required: true,
@@ -24,7 +19,8 @@ const CvScheme = new mongos.Schema({
 });
 
 function GenerateCvToken(payload) {
-    jwt.sign(payload, config.get('Users.Login.JWTPrivateKey'));
+    console.log("......payload", payload);
+    return jwt.sign(payload, config.get('Users.Login.JWTPrivateKey'));
 }
 
 function validateCV(cv) {

@@ -53,7 +53,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 //static files
-app.use(express.static(path.join(__dirname, './uploads/')));
+app.use(express.static(path.join(__dirname, '/public')));
 //setting view engin
 const viewsDirectoryPath = path.join(__dirname, '/templates/views');
 app.set('view engine', 'hbs');
