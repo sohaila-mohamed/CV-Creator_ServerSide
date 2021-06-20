@@ -10,19 +10,32 @@ async function AddCvByID(req, res) {
     //get user cvs copy
     console.log(user.cvs);
     let UserCvs = user.cvs.filter((item) => true);
-    //add new cv
-    UserCvs.push(new Date().toISOString() + user._id + req.body.cvId);
+    //generate token for cv 
+    let cv_token = req.DB_Scheme.getCvToken({ user_id: req.body.userId, temp_id: req.body.templateId, date: new Date().toISOString().trim() });
 
+    //add new cv
+    const _cv = new req.DB_Scheme.Cvs({
+        cvId: cv_token,
+        templateId: req.body.templateId,
+        data: req.body.data
+    });
+    UserCvs.push(_cv);
+    //add new cv to user cv list
     let result = await req.DB_Scheme.User.updateOne({ _id: req.body.userId }, {
         $set: {
-            cvs: UserCvs.filter((item) => true)
+            cvs: UserCvs
         }
     }).catch((err) => {
         console.log("adding cv error : ", err);
 
     });
     if (!result) return next({ status: 400, message: "Bad Request" });
-    return res.sendFile('2021-06-19T20:44:26.482Zindex.js', { root: './uploads/templates' });
+
+    //get template file path
+    let path = req.body.templateId.toString() + "template";
+
+    //send pre-rendered content to clientSide
+    res.render(path, req.body.data);
 
     //send response to the client 
     // return res.send(_.pick(user, ['_id', 'username', 'email', 'age', 'city', 'profileImg']));
