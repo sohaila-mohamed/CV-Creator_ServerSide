@@ -1,8 +1,7 @@
 const bcrypt = require('bcrypt');
-const Joi = require('joi');
 const _ = require('lodash');
 const { LoginValidation } = require('../database/UserScheme');
-
+const { generateSessionToken } = require('./SessionAuthController');
 
 
 
@@ -20,8 +19,11 @@ async function LoginUser(req, res, next) {
 
     //generate token
     const token = user.GenerateAuthenticationToken();
+    //generate session id 
+    const sessionId = generateSessionToken();
     //set response header with the generated token and send the response body mapped
-    res.header('x-login-auth-token', token).send(_.pick(user, ['_id', 'firstName', 'lastName', 'email', 'profileImg', 'plan', 'cvs']));
+    res.append('x-login-auth-token', token);
+    res.send(_.pick(user, ['_id', 'firstName', 'lastName', 'email', 'profileImg', 'plan', 'cvs']));
 
 }
 

@@ -30,7 +30,6 @@ async function AddCvByID(req, res, next) {
 
     //get template file path
     let path = req.body.templateId.toString() + "template";
-    console.log("_cv_id", _cv);
     //send pre-rendered content to clientSide
     res.header('x-cv-token', _cv._id).render(path, req.body.data);
 
@@ -71,11 +70,26 @@ const getUserCvListById = async(req, res, next) => {
 
 }
 
+const getUserPersonalData = async(req, res, next) => {
+    //check if user authenticated 
+    console.log("params.userId", req.params.userId);
+    console.log("User.userId", req.user._id);
+    if (req.params.userId !== req.user._id) return next({ status: 401, message: "Access denied Invalid User token" })
+        //check if user data exist 
+    let user = await req.DB_Scheme.User.findOne({ _id: req.params.userId });
+    if (!user) return next({ status: 404, message: "Not Found Invalid ID" });
+    //send cv list including cv id clientSide
+    let resBody = _.pick(user, ['_id', 'firstName', 'lastName', 'email', 'profileImg']);
+    resBody.cvs = _.map(user.cvs, _.partialRight(_.pick, ['_id']));
+    res.send(resBody);
 
+
+}
 
 
 module.exports = {
     AddCvByID,
     getCvById,
-    getUserCvListById
+    getUserCvListById,
+    getUserPersonalData
 }
