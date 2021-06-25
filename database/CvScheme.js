@@ -14,6 +14,9 @@ const CvScheme = new mongos.Schema({
     data: {
         type: Object,
         default: {}
+    },
+    image: {
+        type: String
     }
 
 });

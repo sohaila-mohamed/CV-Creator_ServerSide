@@ -11,7 +11,7 @@ async function UpdateUserData(req, res, next) {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email === user.email ? user.email : req.body.email,
-            profileImg: req.file.filename ? req.file.filename : user.profileImg,
+            profileImg: req.file.filename ? '/uploads/images/' + req.file.filename : user.profileImg,
             plan: req.body.plan ? req.body.plan : user.plan
         }
     }).catch((err) => {

@@ -1,25 +1,21 @@
 const _ = require('lodash');
 
-async function AddTemplateUser(req, res, next) {
-
-    //validate request body
-    // const { error } = req.DB_Scheme.validateCvs(req.body);
-    // if (error) return res.status(400).send(error.details[0].message);
+async function AddTemplate(req, res, next) {
 
     //check if already registered 
-    let temp = await req.DB_Scheme.Cvs.findOne({ id: req.body.cvId });
+    let temp = await req.DB_Scheme.templates.findOne({ id: req.body.tempId });
     if (temp) return next({ status: 400, message: 'Template Already registered' })
-    console.log("template request", req.body);
+    console.log("template request", req.files['image'][0].filename);
     //create new user 
-    const _temp = new req.DB_Scheme.Cvs({
-        id: req.body.cvId,
-        htmlTemplate: req.file.filename
+    const _temp = new req.DB_Scheme.templates({
+        templateId: req.body.tempId,
+        image: "/uploads/templatesImages/" + req.files['image'][0].filename,
+        data: JSON.parse(req.body.data)
     });
-    console.log(_temp, "temp object")
-
-    //save mapping returned object to the client  
+    console.log(typeof(_temp.data), "temp ", _temp.data)
+        //save mapping returned object to the client  
     _temp.save().then((result) => {
-        res.send(_.pick(result, ['_id', 'htmlTemplate']));
+        res.send(result);
     }).catch((err) => {
         next({ status: 500, message: 'Server Error', err: err })
         for (e in err.errors) { console.log(err.errors[e].message) }
@@ -27,5 +23,5 @@ async function AddTemplateUser(req, res, next) {
 }
 
 module.exports = {
-    AddTemplateUser
+    AddTemplate
 }
