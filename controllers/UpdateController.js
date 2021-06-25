@@ -28,7 +28,7 @@ async function UpdateUserData(req, res, next) {
 
     });
     if (!result) return next({ status: 400, message: "Bad Request" });
-    return res.send(result);
+    return res.header('x-sessionId', ).send(result);
 
 }
 

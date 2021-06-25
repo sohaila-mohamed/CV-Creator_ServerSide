@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-async function AddCvByID(req, res) {
+async function AddCvByID(req, res, next) {
     //check if token matched with requested user 
     if (req.body.userId !== req.user._id) return next({ status: 401, message: "Access denied Invalid User token" });
     //get user from db
@@ -11,24 +11,86 @@ async function AddCvByID(req, res) {
     console.log(user.cvs);
     let UserCvs = user.cvs.filter((item) => true);
     //add new cv
-    UserCvs.push(new Date().toISOString() + user._id + req.body.cvId);
+    const _cv = new req.DB_Scheme.Cvs({
+        templateId: req.body.templateId,
+        data: req.body.data
+    });
+    UserCvs.push(_cv);
 
+    //add new cv to user cv list
     let result = await req.DB_Scheme.User.updateOne({ _id: req.body.userId }, {
         $set: {
-            cvs: UserCvs.filter((item) => true)
+            cvs: UserCvs
         }
     }).catch((err) => {
         console.log("adding cv error : ", err);
 
     });
     if (!result) return next({ status: 400, message: "Bad Request" });
-    return res.sendFile('2021-06-19T20:44:26.482Zindex.js', { root: './uploads/templates' });
+
+    //get template file path
+    let path = req.body.templateId.toString() + "template";
+    //send pre-rendered content to clientSide
+    res.append({ 'x-cv-token': _cv._id });
+    res.render(path, req.body.data);
 
     //send response to the client 
     // return res.send(_.pick(user, ['_id', 'username', 'email', 'age', 'city', 'profileImg']));
 
 
 }
+
+const getCvById = async(req, res, next) => {
+    //check if token matched with requested user 
+    if (req.params.userId !== req.user._id) return next({ status: 401, message: "Access denied Invalid User token" });
+    //get user from db
+    let user = await req.DB_Scheme.User.findOne({ _id: req.params.userId })
+        //check if user exist or not 
+    if (!user) return next({ status: 404, message: "Not Found Invalid ID" });
+    //get user cv data
+    let cv = await user.cvs.find((cv) => cv._id == req.params.cvId);
+    if (!cv) return next({ status: 422, message: "Not Found Invalid CV ID" });
+
+    //get template file path
+    let path = cv.templateId.toString() + "template";
+
+    //send pre-rendered content to clientSide
+    res.render(path, cv.data);
+
+}
+
+const getUserCvListById = async(req, res, next) => {
+    //check if token matched with requested user 
+    if (req.params.userId !== req.user._id) return next({ status: 401, message: "Access denied Invalid User token" });
+    //get user from db
+    let user = await req.DB_Scheme.User.findOne({ _id: req.params.userId })
+        //check if user exist or not 
+    if (!user) return next({ status: 404, message: "Not Found Invalid ID" });
+    //send cv list including cv id clientSide
+    res.send(_.map(user.cvs, _.partialRight(_.pick, ['_id'])));
+
+}
+
+const getUserPersonalData = async(req, res, next) => {
+    //check if user authenticated 
+    console.log("params.userId", req.params.userId);
+    console.log("User.userId", req.user._id);
+    if (req.params.userId !== req.user._id) return next({ status: 401, message: "Access denied Invalid User token" })
+        //check if user data exist 
+    let user = await req.DB_Scheme.User.findOne({ _id: req.params.userId });
+    if (!user) return next({ status: 404, message: "Not Found Invalid ID" });
+    //send cv list including cv id clientSide
+    let resBody = _.pick(user, ['_id', 'firstName', 'lastName', 'email', 'profileImg']);
+    resBody.cvs = _.map(user.cvs, _.partialRight(_.pick, ['_id']));
+    res.send(resBody);
+
+
+}
+
+
 module.exports = {
-    AddCvByID
+    AddCvByID,
+    getCvById,
+    getUserCvListById,
+    getUserPersonalData
 }

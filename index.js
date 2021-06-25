@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require('cors');
 const path = require('path');
 const config = require('config');
+const hbs = require('hbs');
 const app = express();
 const DB = require('./database/DatabaseConnection');
 const Main_Router = require('./routers/MainRouter');
@@ -52,7 +53,11 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 //static files
-app.use(express.static(path.join(__dirname, './uploads/')));
+app.use(express.static(path.join(__dirname, '/public')));
+//setting view engin
+const viewsDirectoryPath = path.join(__dirname, '/templates/views');
+app.set('view engine', 'hbs');
+app.set('views', viewsDirectoryPath);
 //routers 
 app.use('/api', Main_Router);
 //error handler middleware

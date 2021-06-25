@@ -5,6 +5,7 @@ const Login_Router = require('./LoginRouter');
 const Registration_Router = require('./RegisterationRouter');
 const { User, validate } = require("../database/UserScheme");
 const CvTemplate_Router = require('./TemplateRouter');
+const Logout_Router = require('./LogoutRouter');
 // const { Authenticate } = require('../middlewares/Auth');
 
 
@@ -16,9 +17,15 @@ Main_Router.use('/', (req, res, next) => {
     next();
 });
 
+
+
+
+
+
 Main_Router.use('/register', Registration_Router);
 
 Main_Router.use('/login', Login_Router);
+Main_Router.use('/logout', Logout_Router);
 
 Main_Router.use('/user', User_Router);
 Main_Router.use('/template', CvTemplate_Router);

@@ -4,21 +4,24 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 mongos.set('useCreateIndex', true);
 const CvScheme = new mongos.Schema({
-    id: {
+    templateId: {
         type: Number,
         required: true,
         min: [100, 'not valid cv id '],
         max: 599,
         unique: true
     },
-    htmlTemplate: {
-        type: String,
-        required: true
+    data: {
+        type: Object,
+        default: {}
     }
 
 });
 
-
+function GenerateCvToken(payload) {
+    console.log("......payload", payload);
+    return jwt.sign(payload, config.get('Users.Login.JWTPrivateKey'));
+}
 
 function validateCV(cv) {
     console.log("cv", cv)
@@ -39,3 +42,5 @@ const Cv = mongos.model("cvs", CvScheme);
 module.exports.Cv = Cv;
 
 module.exports.validateCv = validateCV;
+
+module.exports.GenerateCvToken = GenerateCvToken;
