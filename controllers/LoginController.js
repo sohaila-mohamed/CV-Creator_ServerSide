@@ -20,9 +20,11 @@ async function LoginUser(req, res, next) {
     //generate token
     const token = user.GenerateAuthenticationToken();
     //generate session id 
-    const sessionId = generateSessionToken();
-    //set response header with the generated token and send the response body mapped
-    res.append('x-login-auth-token', token);
+    res.set({
+        'x-session-id': generateSessionToken(),
+        'x-login-auth-token': token
+    });
+    //set response header with the generated token & sessionId and send the response body mapped
     res.send(_.pick(user, ['_id', 'firstName', 'lastName', 'email', 'profileImg', 'plan', 'cvs']));
 
 }

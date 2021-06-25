@@ -31,7 +31,8 @@ async function AddCvByID(req, res, next) {
     //get template file path
     let path = req.body.templateId.toString() + "template";
     //send pre-rendered content to clientSide
-    res.header('x-cv-token', _cv._id).render(path, req.body.data);
+    res.append({ 'x-cv-token': _cv._id });
+    res.render(path, req.body.data);
 
     //send response to the client 
     // return res.send(_.pick(user, ['_id', 'username', 'email', 'age', 'city', 'profileImg']));

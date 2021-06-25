@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require("config");
-const { validateSession } = require('../controllers/SessionAuthController');
+const { validateSession, generateSessionToken } = require('../controllers/SessionAuthController');
 
 function Authenticate(req, res, next) {
     const sessionId = req.header('x-session-id');
@@ -11,16 +11,17 @@ function Authenticate(req, res, next) {
     else if (!validateSession(sessionId)) {
         //reset headers to delete session_id and user token 
         res.set({});
-        res.status(400).send("Session Expired");
-    }
-    if (!token) return res.status(401).send("Access denied, no token provided in request header ");
+        return res.status(400).send("not Authenticated login again");
+    } else if (!token) return res.status(401).send("Access denied, no token provided in request header ");
     try {
 
         let decode = jwt.verify(token, config.get('Users.Login.JWTPrivateKey'));
+        res.set({ 'x-session-id': generateSessionToken() });
         req.user = decode;
         console.log("decode", decode);
         next();
     } catch (err) {
+        res.set({});
         console.log("error ", err);
         res.status(400).send("invalid token");
         return
